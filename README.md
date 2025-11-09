@@ -1,59 +1,186 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Laravel Take-Home Test
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This repository contains a Laravel application with three implemented PHP/Laravel Coding Challenges,
 
-## About Laravel
+## Overview
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+This project implements three distinct features:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+1. **Rule Evaluator System** - Dynamic rule evaluation based on JSON rules stored in the database
+2. **Filter Builder** - Flexible filtering across Eloquent relationships using dot notation
+3. **State Machine Trait** - Lightweight state machine for Eloquent models with event support
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Requirements
 
-## Learning Laravel
+- PHP 8.2 or higher
+- Composer
+- SQLite (included, no additional setup needed)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## Installation
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+1. Clone the repository:
+```bash
+git clone https://github.com/stymiee/hsone.git
+cd hsone
+```
 
-## Laravel Sponsors
+2. Install dependencies:
+```bash
+composer install
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+3. Copy the environment file:
+```bash
+cp .env.example .env
+```
 
-### Premium Partners
+4. Generate application key:
+```bash
+php artisan key:generate
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+5. Run migrations:
+```bash
+php artisan migrate
+```
 
-## Contributing
+That's it! The application uses SQLite, so no database configuration is needed.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Running the Demonstrations
 
-## Code of Conduct
+Each task has a dedicated artisan command that demonstrates its functionality with real examples.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Task 1: Rule Evaluator
 
-## Security Vulnerabilities
+Run the Rule Evaluator demonstration:
+```bash
+php artisan test:rule-evaluator
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+This command will:
+- Create test users with different roles and verification statuses
+- Demonstrate rule evaluation with various operators (==, !=, in, contains)
+- Show the exact example from the requirements
+- Display evaluation results for each scenario
+
+**Example Output:**
+- Shows which users can perform actions based on JSON rules
+- Demonstrates operators: ==, !=, in, not_in, >, <, contains
+- Tests both array and JSON string rule sets
+
+### Task 2: Filter Builder
+
+Run the Filter Builder demonstration:
+```bash
+php artisan test:filter-builder
+```
+
+This command will:
+- Create test data (patients, locations, appointments)
+- Demonstrate filtering across relationships using dot notation
+- Show the exact example from requirements (patient.name, appointment.status, location.city)
+- Display the generated SQL queries
+
+**Example Output:**
+- Shows filtering on direct model fields
+- Demonstrates relationship filtering with dot notation
+- Displays the actual SQL generated (with WHERE EXISTS subqueries)
+- Tests JSON string input
+
+### Task 3: State Machine
+
+Run the State Machine demonstration:
+```bash
+php artisan test:state-machine
+```
+
+This command will:
+- Create test documents and demonstrate state transitions
+- Show valid and invalid transitions
+- Demonstrate event firing (ModelTransitioning and ModelTransitioned)
+- Test transition validation
+
+**Example Output:**
+- Shows state transitions: draft → submitted → approved/rejected
+- Demonstrates exception handling for invalid transitions
+- Shows event dispatching
+- Tests transition without saving functionality
+
+## Project Structure
+
+```
+app/
+├── Console/Commands/
+│   ├── TestRuleEvaluator.php      # Task 1 demo command
+│   ├── TestFilterBuilder.php      # Task 2 demo command
+│   └── TestStateMachine.php       # Task 3 demo command
+├── Events/
+│   ├── ModelTransitioning.php    # State machine event (before)
+│   └── ModelTransitioned.php      # State machine event (after)
+├── Models/
+│   ├── Appointment.php            # Task 2 model
+│   ├── Document.php               # Task 3 model
+│   ├── Location.php               # Task 2 model
+│   ├── Patient.php                # Task 2 model
+│   ├── Rule.php                   # Task 1 model
+│   └── User.php                   # Task 1 model
+├── Services/
+│   ├── FilterBuilder.php          # Task 2 service
+│   └── RuleEvaluator.php          # Task 1 service
+└── Traits/
+    └── StateMachine.php           # Task 3 trait
+
+tests/
+├── Feature/
+│   ├── FilterBuilderTest.php      # Task 2 tests
+│   ├── RuleEvaluatorTest.php      # Task 1 tests
+│   └── StateMachineTest.php       # Task 3 tests
+```
+
+## Running Tests
+
+Run all tests:
+```bash
+php artisan test
+```
+
+Run tests for a specific task:
+```bash
+# Task 1
+php artisan test --filter RuleEvaluatorTest
+
+# Task 2
+php artisan test --filter FilterBuilderTest
+
+# Task 3
+php artisan test --filter StateMachineTest
+```
+
+## Task Details
+
+### Task 1: Rule Evaluator
+- **File**: `app/Services/RuleEvaluator.php`
+- **Purpose**: Evaluates if a user can perform an action based on JSON rules
+- **Operators**: ==, !=, in, not_in, >, <, contains
+- **Features**: Uses PHP Reflection and Laravel helpers for field access
+
+### Task 2: Filter Builder
+- **File**: `app/Services/FilterBuilder.php`
+- **Purpose**: Applies JSON filters across Eloquent relationships
+- **Features**: Dot notation support, automatic whereHas/orWhereHas, SQL generation
+
+### Task 3: State Machine
+- **File**: `app/Traits/StateMachine.php`
+- **Purpose**: Manages state transitions with validation and events
+- **Features**: Transition validation, event firing, helper methods
+
+## Documentation
+
+Each task has detailed documentation:
+- `RULE_EVALUATOR_README.md` - Task 1 documentation
+- `FILTER_BUILDER_README.md` - Task 2 documentation
+- `STATE_MACHINE_README.md` - Task 3 documentation
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
