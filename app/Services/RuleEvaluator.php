@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\User;
+use JsonException;
 use ReflectionClass;
 use ReflectionProperty;
 
@@ -14,12 +15,13 @@ class RuleEvaluator
      * @param User $user The user model to evaluate
      * @param array|string $ruleSet The rule set (array or JSON string)
      * @return bool True if all rules pass, false otherwise
+     * @throws JsonException
      */
     public function evaluate(User $user, array|string $ruleSet): bool
     {
         // If ruleSet is a JSON string, decode it
         if (is_string($ruleSet)) {
-            $ruleSet = json_decode($ruleSet, true);
+            $ruleSet = json_decode($ruleSet, true, 512, JSON_THROW_ON_ERROR);
         }
 
         // Validate rule set structure
@@ -47,7 +49,7 @@ class RuleEvaluator
     protected function evaluateRule(User $user, array $rule): bool
     {
         // Validate rule structure
-        if (!isset($rule['field']) || !isset($rule['operator']) || !array_key_exists('value', $rule)) {
+        if (!isset($rule['field'], $rule['operator']) || !array_key_exists('value', $rule)) {
             return false;
         }
 
@@ -86,7 +88,7 @@ class RuleEvaluator
         // If data_get returns null, try reflection to access protected/private properties
         if ($value === null && !$user->offsetExists($field)) {
             $reflection = new ReflectionClass($user);
-            
+
             // Try to get as property
             if ($reflection->hasProperty($field)) {
                 $property = $reflection->getProperty($field);
@@ -112,7 +114,7 @@ class RuleEvaluator
             return $actual === null;
         }
 
-        return $actual == $expected;
+        return $actual === $expected;
     }
 
     /**
@@ -129,7 +131,7 @@ class RuleEvaluator
             return $actual !== null;
         }
 
-        return $actual != $expected;
+        return $actual !== $expected;
     }
 
     /**
